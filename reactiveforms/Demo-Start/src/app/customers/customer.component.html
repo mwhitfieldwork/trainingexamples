@@ -4,7 +4,43 @@
   </div>
 
   <div class="card-body">
-    <form novalidate
+    <form (ngSubmit)="save()" [formGroup]="customerForm"><!-- use the formGroup to bind to the base form control of the formModel
+      the form then knows not to create its own formModel but use the one defined in the class instead -->
+     <div>
+       <label for="rating">Rating</label>
+       <input type="text" id="rating"
+              placeholder="Rating (required)"
+              formControlName = "rating" 
+              [ngClass]="{'is-invalid': (customerForm.get('rating')?.touched ||
+              customerForm.get('rating')?.dirty) &&
+              !customerForm.get('rating')?.valid }"/>
+              <!--
+              ngClass uses the get method on the customerform object to grab the 
+              valid, dirty and touched properties on the form. 
+              the formcontrolName is used becuase we are binding to a string, not a property
+              -->
+              <span class="invalid-feedback">
+               <span *ngIf="customerForm.get('rating').errors?.required">
+                 Please enter a product name
+               </span>
+             </span>
+             
+              <span class="invalid-feedback">
+                <span *ngIf="customerForm.get('rating').errors?.range">
+                  The product name must bigger than 1 and lower then 5.
+                </span>
+              </span>
+      </div>
+   </form>  
+    
+  </div>
+</div>
+<br>Dirty: {{ customerForm.dirty }}
+<br>Touched: {{ customerForm.touched }}
+<br>Valid: {{ customerForm.valid }}
+<br>Value: {{ customerForm.value | json }}
+
+<!-- <form novalidate
           (ngSubmit)="save(signupForm)"
           #signupForm="ngForm">
 
@@ -212,10 +248,4 @@
           </button>
         </div>
       </div>
-    </form>
-  </div>
-</div>
-<br>Dirty: {{ signupForm.dirty }}
-<br>Touched: {{ signupForm.touched }}
-<br>Valid: {{ signupForm.valid }}
-<br>Value: {{ signupForm.value | json }}
+    </form> -->
