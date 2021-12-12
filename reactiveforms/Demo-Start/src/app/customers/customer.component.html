@@ -31,6 +31,49 @@
                 </span>
               </span>
       </div>
+      <!-- Cross Field validation -->
+      <div formGroupName="emailGroup"><!--must use title of the form builder form group name-->
+        <div>
+        <label for="rating">Email</label>
+        <input type="email" id="email"
+                placeholder="email (required)"
+                formControlName = "email" 
+                [ngClass]="{'is-invalid':customerForm.get('emailGroup')?.errors || 
+                ((customerForm.get('emailGroup.email')?.touched ||
+                customerForm.get('emailGroup.email')?.dirty) &&
+                !customerForm.get('emailGroup.email')?.valid) }"/>
+                <!--When you use a form group element, you must adjust the get method to refer to it 
+                in the template. so from customerForm.get('email') to customerForm.get(emailGroup.email)-->
+
+                <span class="invalid-feedback">
+                  <span *ngIf="customerForm.get('emailGroup.email').errors?.required">
+                    Please enter an email adress
+                  </span>
+              </span>
+        </div>   
+        <div>
+        <label for="confirmEmail">Rating</label>
+        <input type="email" id="confirmEmail"
+                placeholder="Confirm Email (required)"
+                formControlName = "confirmEmail" 
+                [ngClass]="{'is-invalid': customerForm.get('emailGroup')?.errors ||
+                ((customerForm.get('emailGroup.confirmEmail')?.touched ||
+                customerForm.get('emailGroup.confirmEmail')?.dirty) &&
+                !customerForm.get('emailGroup.confirmEmail')?.valid)}"/>
+
+              <span class="invalid-feedback">
+                <span *ngIf="customerForm.get('emailGroup.confirmEmail').errors?.required">
+                  Please enter a confirmation email
+                </span>
+              </span>
+
+              <span class="invalid-feedback">
+                <span *ngIf="customerForm.get('emailGroup').errors?.match">
+                  The emails do not match
+                </span>
+              </span>
+        </div>  
+      </div>        
    </form>  
     
   </div>

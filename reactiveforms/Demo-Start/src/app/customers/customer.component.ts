@@ -48,6 +48,29 @@ function ratingRangeFactory(min:number, max:number): ValidatorFn {
   };
 }
 
+//cross Field Validator Function
+/*
+function emailCompare(c:AbstractControl):{key:string}:boolean | null {
+  let email = c.get('emailGroup.email');
+  let confirmEmail = c.get('emailGroup.confirmEmail');
+  if(email !== confirmEmail){
+    return {'match':true}
+  }
+  return null
+}
+*/
+
+function emailCompare(c:AbstractControl):{[key:string]: boolean} | null {
+  let email = c.get('email');
+  let confirmEmail = c.get('confirmEmail');
+  if(email.pristine !== confirmEmail.pristine){ // if neither of the email fields are touched, pass validation
+    return null;
+  }
+  if(email.value !== confirmEmail.value){//if the values done match  - throw error
+    return {'match':true}//add match to the list of validation errors to check against
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-customer',
@@ -64,10 +87,12 @@ export class CustomerComponent implements OnInit {
     this.customerForm = this.fb.group({
       rating:[null,ratingRangeFactory(1,5)],
       //cross-field validation (nested form group)
-      availability: this.fb.group({ //availability is the formGroupName in the template
-        start:['', Validators.required],//both of the names here are the formControl names in the template
-        end:['',Validators.required]
-      })
+      emailGroup: this.fb.group({ //availability is the formGroupName in the template
+        email:['', [Validators.required, Validators.email]],//both of the names here are the formControl names in the template
+        confirmEmail:['',Validators.required]
+      },
+      {validator: emailCompare}//use the validator as the 2nd parameter
+      )
     });
   }
 
