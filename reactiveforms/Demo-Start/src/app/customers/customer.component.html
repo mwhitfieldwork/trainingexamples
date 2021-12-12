@@ -72,8 +72,25 @@
                   The emails do not match
                 </span>
               </span>
-        </div>  
-      </div>        
+        </div>                      
+      </div>  
+      <div>
+        <label>
+          <input 
+          type="radio"
+          value="email"
+          formControlName = "notification"
+          (click)="setNotification('email')" /> Email
+        </label>
+
+        <label>
+          <input 
+          type="radio"
+          value="text"
+          formControlName = "notification"
+          (click)="setNotification('text')" /> Text
+        </label>
+      </div>      
    </form>  
     
   </div>

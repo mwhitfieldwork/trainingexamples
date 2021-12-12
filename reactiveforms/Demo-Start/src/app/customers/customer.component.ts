@@ -60,6 +60,31 @@ function emailCompare(c:AbstractControl):{key:string}:boolean | null {
 }
 */
 
+/*
+- Both form controls and from Groups have a valueChanges property. 
+It emeits and event everytime the vlaue of a control changes
+value changes is an observable ( emits a stream of values over time)
+We susbsribe to the valuechanges property.
+
+- There is also a statusChange property watching for the validation 
+stream that gets emitted
+*/
+
+/*
+this.myFormControl.valueChanges.subscribe(value => console.log(value))
+--- Watches for value changes of the given field and console.logs it out
+
+this.myFormGroup.valueChanges.subscribe(value => console.log(JSON.stringify(value)))
+--- Anytime any on e of the controls in the form group changes. The value is emitted
+ and the value is consoled out
+
+ this.customerForm.valueChanges.subscribe(value => console.log(JSON.stringify(value)))
+--- Watch for any changes in the entire form.
+
+--We only want to watch if we want to do something when the user does something.
+
+*/
+
 function emailCompare(c:AbstractControl):{[key:string]: boolean} | null {
   let email = c.get('email');
   let confirmEmail = c.get('confirmEmail');
@@ -91,13 +116,19 @@ export class CustomerComponent implements OnInit {
         email:['', [Validators.required, Validators.email]],//both of the names here are the formControl names in the template
         confirmEmail:['',Validators.required]
       },
-      {validator: emailCompare}//use the validator as the 2nd parameter
-      )
+      {validator: emailCompare}),//use the validator as the 2nd parameter
+      notification:'email'
     });
+
+    this.customerForm.get('notification').valueChanges.subscribe(
+        value => console.log(value)
+    )
   }
 
   save(): void {
-    //console.log(customerForm.form);
-    //console.log('Saved: ' + JSON.stringify(customerForm.value));
   }
+
+  setNotification(preferece:string) {
+  }
+
 }
