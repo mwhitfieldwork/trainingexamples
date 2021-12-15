@@ -115,13 +115,13 @@ export class CustomerComponent implements OnInit {
       emailGroup: this.fb.group({ //availability is the formGroupName in the template
         email:['', [Validators.required, Validators.email]],//both of the names here are the formControl names in the template
         confirmEmail:['',Validators.required]
-      },
-      {validator: emailCompare}),//use the validator as the 2nd parameter
-      notification:'email'
+      },{validator: emailCompare}),//use the validator as the 2nd parameter
+      notification:'email',
+      phone:''
     });
 
     this.customerForm.get('notification').valueChanges.subscribe(
-        value => console.log(value)
+        value => this.setNotification(value)
     )
   }
 
@@ -129,6 +129,13 @@ export class CustomerComponent implements OnInit {
   }
 
   setNotification(preferece:string) {
+    const phoneControl = this.customerForm.get('phone');
+    if (preferece === 'text') {
+      phoneControl.setValidators(Validators.required);
+    } else {
+      phoneControl.clearValidators(); //gets rid of the set validation
+    }
+    phoneControl.updateValueAndValidity();// ??
   }
 
 }

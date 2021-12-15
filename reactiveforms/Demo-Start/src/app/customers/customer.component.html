@@ -34,7 +34,7 @@
       <!-- Cross Field validation -->
       <div formGroupName="emailGroup"><!--must use title of the form builder form group name-->
         <div>
-        <label for="rating">Email</label>
+        <label for="email">Email</label>
         <input type="email" id="email"
                 placeholder="email (required)"
                 formControlName = "email" 
@@ -51,8 +51,9 @@
                   </span>
               </span>
         </div>   
+
         <div>
-        <label for="confirmEmail">Rating</label>
+        <label for="confirmEmail">Confirm Email</label>
         <input type="email" id="confirmEmail"
                 placeholder="Confirm Email (required)"
                 formControlName = "confirmEmail" 
@@ -72,23 +73,38 @@
                   The emails do not match
                 </span>
               </span>
-        </div>                      
-      </div>  
+        </div>                     
+      </div> 
+
+      <div>
+        <label for="phone">Phone</label>
+        <input type="phone" id="phone"
+                placeholder="phone (required)"
+                formControlName = "phone" 
+                [ngClass]="{'is-invalid':!customerForm.get('phone')?.valid}"/>
+
+                <span class="invalid-feedback">
+                  <span *ngIf="customerForm.get('phone').errors?.required">
+                    Please enter an email adress
+                  </span>
+              </span>
+      </div> 
+
       <div>
         <label>
           <input 
           type="radio"
           value="email"
-          formControlName = "notification"
-          (click)="setNotification('email')" /> Email
+          formControlName = "notification"/>
+          Email
         </label>
 
         <label>
           <input 
           type="radio"
           value="text"
-          formControlName = "notification"
-          (click)="setNotification('text')" /> Text
+          formControlName = "notification"/>
+          Text
         </label>
       </div>      
    </form>  
