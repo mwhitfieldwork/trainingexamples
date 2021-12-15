@@ -120,7 +120,7 @@ export class CustomerComponent implements OnInit {
       phone:''
     });
 
-    this.customerForm.get('notification').valueChanges.subscribe(
+    this.customerForm.get('notification').valueChanges.subscribe(//you dont need to have the (click)="someaction()" - if you use a watcher you can set that functionality in the class
         value => this.setNotification(value)
     )
   }
