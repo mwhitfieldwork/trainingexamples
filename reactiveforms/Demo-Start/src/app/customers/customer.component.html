@@ -34,22 +34,17 @@
       <!-- Cross Field validation -->
       <div formGroupName="emailGroup"><!--must use title of the form builder form group name-->
         <div>
-        <label for="email">Email</label>
-        <input type="email" id="email"
-                placeholder="email (required)"
-                formControlName = "email" 
-                [ngClass]="{'is-invalid':customerForm.get('emailGroup')?.errors || 
-                ((customerForm.get('emailGroup.email')?.touched ||
-                customerForm.get('emailGroup.email')?.dirty) &&
-                !customerForm.get('emailGroup.email')?.valid) }"/>
-                <!--When you use a form group element, you must adjust the get method to refer to it 
-                in the template. so from customerForm.get('email') to customerForm.get(emailGroup.email)-->
+          <label for="email">Email</label>
+          <input type="email" id="email"
+            placeholder="email (required)"
+            formControlName = "email" 
+            [ngClass]="{'is-invalid':emailMessage}"/>
+            <!--When you use a form group element, you must adjust the get method to refer to it 
+            in the template. so from customerForm.get('email') to customerForm.get(emailGroup.email)-->
 
-                <span class="invalid-feedback">
-                  <span *ngIf="customerForm.get('emailGroup.email').errors?.required">
-                    Please enter an email adress
-                  </span>
-              </span>
+          <span class="invalid-feedback">
+            {{emailMessage}}
+          </span>
         </div>   
 
         <div>
@@ -76,7 +71,7 @@
         </div>                     
       </div> 
 
-      <div>
+      <div class="phone-control">
         <label for="phone">Phone</label>
         <input type="phone" id="phone"
                 placeholder="phone (required)"
@@ -90,7 +85,7 @@
               </span>
       </div> 
 
-      <div>
+      <div class="radio buttons">
         <label>
           <input 
           type="radio"

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+import {debounceTime} from 'rxjs/operators';
 
 import { Customer } from './customer';
-
 
 //CUSTOM VALIDATOR
 //takes one parameter  and AbstractContorl object
@@ -105,8 +105,14 @@ function emailCompare(c:AbstractControl):{[key:string]: boolean} | null {
 export class CustomerComponent implements OnInit {
   customer = new Customer();
   customerForm:FormGroup;
+  emailMessage:string; //contains the vlidation message to display to the user, if any
 
   constructor(private fb:FormBuilder) { }
+  
+  private validationMessages ={ //lists all of the available messages for a form control
+    required: 'please enter your email address', //key:value (key - the validation rule)
+    email: 'Please enter a valid email address' // value the message to display
+  }
 
   ngOnInit(): void {
     this.customerForm = this.fb.group({
@@ -123,6 +129,13 @@ export class CustomerComponent implements OnInit {
     this.customerForm.get('notification').valueChanges.subscribe(//you dont need to have the (click)="someaction()" - if you use a watcher you can set that functionality in the class
         value => this.setNotification(value)
     )
+
+   const emailControl =  this.customerForm.get('emailGroup.email');
+   emailControl.valueChanges.pipe(
+    debounceTime(2000) //waits 2 second before triggering validation
+   ).subscribe(
+     value => this.setMessage(emailControl)
+   )
   }
 
   save(): void {
@@ -138,4 +151,16 @@ export class CustomerComponent implements OnInit {
     phoneControl.updateValueAndValidity();// ??
   }
 
+  setMessage(c:AbstractControl):void {
+    this.emailMessage = '';
+    if((c.touched || c.dirty) && c.errors){ // the condition will pass if the control was touched or dirty and has validatio errors
+      this.emailMessage = Object.keys(c.errors).map(// the erros collection uses the validation rule name as the key 
+        key => this.validationMessages[key]).join('');// the validationMessages object (in the Form control) also uses the validation rule name as the key for access the the message
+    }
+  }
+
 }
+
+//debounceTime  - lets ou type until a set time is up (1second for example) then it triggers the validation
+//throttleTime - emits a value then ignores other values for a specific amount of time ( good for tracking mouse movements)
+//distinctUntilChanged - surpresses duplicate consecutive items ( good for tracking key events when only the ctrl of shift key is changed)
