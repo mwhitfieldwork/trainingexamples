@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators,FormArray } from '@angular/forms';
 import {debounceTime} from 'rxjs/operators';
 
 import { Customer } from './customer';
@@ -19,6 +19,16 @@ function ratingRange (c:AbstractControl):{[key:string]: boolean} | null{
   }
   return null;
 }
+
+//Duplicating Form Elements:
+//We only want to duplicate 1 thing. If it is one feild ( we duplicate the form control)
+//If we are duplicating a section of a form 9 address section we dump the form controls
+//into a form Group and duplicate that
+//Refactor Form builder to create the nested FG instance with a metho
+//Make a formarray to hold the copies
+//Loop through from array
+//duplcate the form element(s)
+
 
 
 //What if we need more than 1 param for the custom validator
@@ -108,6 +118,13 @@ export class CustomerComponent implements OnInit {
   emailMessage:string; //contains the vlidation message to display to the user, if any
 
   constructor(private fb:FormBuilder) { }
+
+  get addresses():FormArray {//returns a form array
+                             //uses the get method to grab the addresses formControl which calls the buildAddress method
+                              //ensure no other code changes the formArray, it is defined as a getter
+                              //uses the <FormArray> to cast it to a certain type other wise it defaults to AbstractControl
+    return <FormArray>this.customerForm.get('addresses');
+  }
   
   private validationMessages ={ //lists all of the available messages for a form control
     required: 'please enter your email address', //key:value (key - the validation rule)
@@ -123,8 +140,26 @@ export class CustomerComponent implements OnInit {
         confirmEmail:['',Validators.required]
       },{validator: emailCompare}),//use the validator as the 2nd parameter
       notification:'email',
-      phone:''
+      phone:'',
+      sendCatalog:true,
+      addresses: this.fb.array([this.buildAddresses()]) // call the formGroup method
+                                                        //buildAddresses in index 0 of this array
     });
+
+    ///benefits of creating a from Group:
+    // Match the value of the form model to the data model
+    // check the touched, dirty and valid state
+    //Watch for changes and react to them
+    //Perform cross field vlaidation
+    // and you can duplicate the group
+
+
+//Form Array:
+//a Group of form groups or arrays
+//Uses indexes in stead of names to access
+
+
+
 
     this.customerForm.get('notification').valueChanges.subscribe(//you dont need to have the (click)="someaction()" - if you use a watcher you can set that functionality in the class
         value => this.setNotification(value)
@@ -136,6 +171,21 @@ export class CustomerComponent implements OnInit {
    ).subscribe(
      value => this.setMessage(emailControl)
    )
+  }
+
+  buildAddresses(): FormGroup { //make a function that returns a form group like emailGroup
+    return this.fb.group({ // create a formGroup for the below listed benefits
+      addressType:'home', //call this method anytime an instance of the this form group is needed
+      street1:['',Validators.required],
+      street2:'',
+      city:'',
+      state:'',
+      zip:'' // make sure the formbuilder name match the formControlName
+    })
+  }
+
+  addAddressesToTheForm():void {
+    this.addresses.push(this.buildAddresses())
   }
 
   save(): void {
